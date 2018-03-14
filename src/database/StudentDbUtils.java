@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class StudentDbUtils {
@@ -14,6 +15,7 @@ public class StudentDbUtils {
     PreparedStatement preparedStatement;
     ResultSet resultSet;
 
+    ObservableList<Student> listOfStudents = FXCollections.observableArrayList();
     Connection connection = DatabaseConnector.databaseConnector();
 
     public boolean createStudent(Student student) {
@@ -98,39 +100,39 @@ public class StudentDbUtils {
         return null;
     }
      */
-//    public ObservableList<Student> fetchData() {
-//        String query = "SELECT * FROM student";
-//        if (connection != null) {
-//            try {
-//                preparedStatement = connection.prepareStatement(query);
-//                resultSet = preparedStatement.executeQuery();
-//
-//                ObservableList listOfStudents = null;
-//                while (resultSet.next()) {
-//                    int id=resultSet.getInt("id");
-//                    String name=resultSet.getString("name");
-//                    String address=resultSet.getString("address");
-//                    int roll=resultSet.getInt("roll");
-//                    String dateOfBirth=resultSet.getString("dob");
-//                    String gender=resultSet.getString("gender");
-//                    String role=resultSet.getString("role");
-//                    String username=resultSet.getString("username");
-//                    String password=resultSet.getString("password");
-//                    
-//                    Student student=new Student(id, name, address, roll, dateOfBirth, gender, role, username, password);
-//                    
-//                    listOfStudents.add(student);
-//                    
-//                }
-//                return listOfStudents;
-//
-//            } catch (SQLException ex) {
-//                ex.printStackTrace();
-//            }
-//
-//        }
-//        return null;
-//
-//    }
+    public ObservableList<Student> fetchData() {
+        String query = "SELECT * FROM student";
+        if (connection != null) {
+            try {
+                preparedStatement = connection.prepareStatement(query);
+                resultSet = preparedStatement.executeQuery();
+
+                while (resultSet.next()) {
+                    int id = resultSet.getInt("id");
+                    String name = resultSet.getString("name");
+                    String address = resultSet.getString("address");
+                    int roll = resultSet.getInt("roll");
+                    String dateOfBirth = resultSet.getString("dob");
+                    String gender = resultSet.getString("gender");
+                    String role = resultSet.getString("role");
+                    String username = resultSet.getString("username");
+                    String password = resultSet.getString("password");
+
+                    Student student = new Student(id, name, address, roll, dateOfBirth, gender, role, username, password);
+
+//                    System.out.println("student : "+student.getId());
+                    listOfStudents.add(student);
+
+                }
+                return listOfStudents;
+
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+
+        }
+        return null;
+
+    }
 
 }

@@ -22,6 +22,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 /**
  * FXML Controller class
@@ -71,7 +72,7 @@ public class StudentController implements Initializable {
     @FXML
     private TableColumn<Student, String> colUsername;
     @FXML
-    private TableColumn<Student, String>colPassword;
+    private TableColumn<Student, String> colPassword;
     @FXML
     private TableColumn<Student, String> colRoles;
     @FXML
@@ -84,17 +85,16 @@ public class StudentController implements Initializable {
      */
     ToggleGroup radioToggle;
     ObservableList listOfStudents;
-    
-    
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         radioToggle = new ToggleGroup();
         rdMale.setToggleGroup(radioToggle);
         rdFemale.setToggleGroup(radioToggle);
-        
-        cmbRoles.getItems().addAll("Admin","User");
-        
 
+        cmbRoles.getItems().addAll("Admin", "User");
+        
+        getAllData();
     }
 
     @FXML
@@ -103,29 +103,32 @@ public class StudentController implements Initializable {
 
     @FXML
     private void handleBtnSaveAction(ActionEvent event) {
-        Student student=new Student();
+        Student student = new Student();
         student.setName(txtName.getText());
         student.setAddress(txtAddress.getText());
         student.setRoll(Integer.parseInt(txtRoll.getText()));
-        RadioButton rbGender=(RadioButton) radioToggle.getSelectedToggle();
+        RadioButton rbGender = (RadioButton) radioToggle.getSelectedToggle();
         student.setGender(rbGender.getText());
         student.setDateOfBirth(dateDob.getEditor().getText());
         student.setRole(cmbRoles.getSelectionModel().getSelectedItem());
         student.setUsername(txtUsename.getText());
         student.setPassword(pwdPassword.getText());
-        
+
         //Creating StudentDbUtils object for createStudent(Student) function call
-        StudentDbUtils studentDbUtils=new StudentDbUtils();
-        if(studentDbUtils.createStudent(student)){
+        StudentDbUtils studentDbUtils = new StudentDbUtils();
+        if (studentDbUtils.createStudent(student)) {
             clearFields();
+            
+            //Clears current table Data
+            tblStudent.setItems(null);
+            //set the data into table
+            getAllData();
+            
             System.out.println("Student Created Successfully");
-        }else{
+        } else {
             System.out.println("Cannot Created Student");
         }
-        
-        
-        
-        
+
     }
 
     @FXML
@@ -135,8 +138,8 @@ public class StudentController implements Initializable {
     @FXML
     private void handleBtnDeleteAction(ActionEvent event) {
     }
-    
-    public void clearFields(){
+
+    public void clearFields() {
         txtId.clear();
         txtName.clear();
         txtAddress.clear();
@@ -144,11 +147,32 @@ public class StudentController implements Initializable {
         txtUsename.clear();
         pwdPassword.clear();
         dateDob.getEditor().setText("");
-        
+
     }
-    
-//    public void getAllData(){
-//        
-//    }
+
+    public void getAllData() {
+        StudentDbUtils studentDbUtils = new StudentDbUtils();
+        //Stores ObservableList of students from fetchData()
+        listOfStudents = studentDbUtils.fetchData();
+        if (listOfStudents != null) {
+            
+            //Helps to set the data according to their field
+            colId.setCellValueFactory(new PropertyValueFactory<>("id"));
+            colName.setCellValueFactory(new PropertyValueFactory<>("name"));
+            colAddress.setCellValueFactory(new PropertyValueFactory<>("address"));
+            colRoll.setCellValueFactory(new PropertyValueFactory<>("roll"));
+            colDob.setCellValueFactory(new PropertyValueFactory<>("dateOfBirth"));
+            colGender.setCellValueFactory(new PropertyValueFactory<>("gender"));
+            colRoles.setCellValueFactory(new PropertyValueFactory<>("role"));
+            colUsername.setCellValueFactory(new PropertyValueFactory<>("username"));
+            colPassword.setCellValueFactory(new PropertyValueFactory<>("password"));
+            
+            //Sets the list of Student into table view
+            tblStudent.setItems(listOfStudents);
+
+        } else {
+            System.out.println("Cannot Read Data from Database");
+        }
+    }
 
 }
