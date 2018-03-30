@@ -135,4 +135,29 @@ public class StudentDbUtils {
 
     }
 
+    public Boolean deleteStudent(int id) {
+        String query = "DELETE FROM student where id=?";
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(StudentDbUtils.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    public Boolean loginAction(String username, String password) throws SQLException {
+        String query = "SELECT * FROM student Where username=? and password=?";
+        preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, username);
+        preparedStatement.setString(2, password);
+        resultSet=preparedStatement.executeQuery();
+        if(resultSet.next()){
+            return true;
+        }
+        return false;
+
+    }
 }
